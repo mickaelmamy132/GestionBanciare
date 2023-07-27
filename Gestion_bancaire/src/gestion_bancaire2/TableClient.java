@@ -1,0 +1,502 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
+ */
+package gestion_bancaire2;
+import java.awt.Color;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+import java.sql.*;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+
+
+
+/**
+ *
+ * @author mickael
+ */
+public class TableClient extends javax.swing.JInternalFrame {
+
+    /**
+     * Creates new form TableClient
+     */
+    Connection conn;
+    PreparedStatement st;
+    ResultSet resultat;
+    public TableClient() {
+        initComponents();
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
+        BasicInternalFrameUI ui = (BasicInternalFrameUI)this.getUI();
+        ui.setNorthPane(null);
+        voir_list_client();
+        colorerTable();
+        TextRecherche.setToolTipText("veuillez saisissez le client recherché");
+            // Supprime la barre de titre du JInternalFrame
+        BasicInternalFrameUI uix = (BasicInternalFrameUI)getUI();
+        uix.setNorthPane(null);
+
+        // Ajoute un ComponentAdapter pour détecter les événements de redimensionnement
+        addComponentListener(new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            centerInternalFrame();
+        }
+    });
+    }
+    private void centerInternalFrame() {
+    // Centre le JInternalFrame
+    Dimension parentSize = getParent().getSize();
+    Dimension frameSize = getSize();
+    int x = (parentSize.width - frameSize.width) / 2;
+    int y = (parentSize.height - frameSize.height) / 2;
+    setLocation(x, y);
+    }
+    public void colorerTable() {
+    DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+        @Override
+        public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // Appelez la méthode de la superclasse pour obtenir le composant par défaut
+            java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // Définissez la couleur de fond pour les lignes impaires sur une couleur personnalisée
+            if (row % 2 == 0) {
+                //cellComponent.setBackground(Color.LIGHT_GRAY);
+                cellComponent.setBackground(Color.LIGHT_GRAY);
+            } else {
+                // Définissez la couleur de fond pour les lignes paires sur une autre couleur personnalisée
+                cellComponent.setBackground(Color.WHITE);
+            }
+
+            // Retournez le composant mis à jour
+            return cellComponent;
+        }
+    };
+
+    // Appliquez le rendu personnalisé à toutes les colonnes de votre JTable
+    for (int i = 0; i < Table_client.getColumnCount(); i++) {
+        Table_client.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+    }
+}
+
+    public void voir_list_client()
+    {
+        int Compter;
+         try
+        {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/banque","root","");
+            st = conn.prepareStatement("SELECT * FROM CLIENT ORDER BY NOM ASC");
+            resultat = st.executeQuery();
+            
+            ResultSetMetaData RSMD = resultat.getMetaData();
+            Compter = RSMD.getColumnCount();
+            DefaultTableModel dft = (DefaultTableModel) Table_client.getModel();
+            dft.setRowCount(0);
+            
+            while (resultat.next())
+            {
+                Vector v2 = new Vector();
+                
+                for (int i = 1 ; i<= Compter; i++)
+                {
+                    v2.add(resultat.getString("numCompte"));
+                    v2.add(resultat.getString("NOM"));
+                    v2.add(resultat.getString("PRENOM"));
+                    v2.add(resultat.getString("TEL"));
+                    v2.add(resultat.getString("EMAIL"));
+                    v2.add(resultat.getString("SOLDET"));
+                }
+                dft.addRow(v2);
+            }
+            
+        }
+        catch(SQLException e)
+        {
+            //System.out.println("erreur");
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        btn_ajout = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Table_client = new javax.swing.JTable();
+        modifSolde = new javax.swing.JTextField();
+        modifNom = new javax.swing.JTextField();
+        modifPrenom = new javax.swing.JTextField();
+        modifTel = new javax.swing.JTextField();
+        modifEmail = new javax.swing.JTextField();
+        modifier = new javax.swing.JButton();
+        Effacer = new javax.swing.JButton();
+        annuler = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        TextRecherche = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+
+        setPreferredSize(new java.awt.Dimension(806, 444));
+
+        btn_ajout.setIcon(new javax.swing.ImageIcon("D:\\Mon_Dossier\\NetBeansProjects\\Gestion_bancaire2\\icons8-plus-30.png")); // NOI18N
+        btn_ajout.setText("ajout client");
+        btn_ajout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ajoutActionPerformed(evt);
+            }
+        });
+
+        Table_client.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "numCompte", "NOM", "PRENOM", "TEL", "EMAIL", "SOLDE"
+            }
+        ));
+        Table_client.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Table_clientMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(Table_client);
+
+        modifier.setBackground(new java.awt.Color(0, 0, 0));
+        modifier.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        modifier.setForeground(new java.awt.Color(255, 255, 255));
+        modifier.setText("modifier");
+        modifier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifierActionPerformed(evt);
+            }
+        });
+
+        Effacer.setBackground(new java.awt.Color(0, 0, 0));
+        Effacer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Effacer.setForeground(new java.awt.Color(255, 255, 255));
+        Effacer.setText("effacer");
+        Effacer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EffacerActionPerformed(evt);
+            }
+        });
+
+        annuler.setBackground(new java.awt.Color(0, 0, 0));
+        annuler.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        annuler.setForeground(new java.awt.Color(255, 255, 255));
+        annuler.setText("annuler");
+        annuler.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                annulerActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("NOM");
+
+        jLabel2.setText("PRENOM");
+
+        jLabel3.setText("TEL");
+
+        jLabel4.setText("EMAIL");
+
+        jLabel5.setText("SOLDE");
+
+        TextRecherche.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TextRechercheActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("recherche d'un client");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(modifNom, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(modifTel, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(modifEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                            .addComponent(modifPrenom)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(203, 203, 203)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(modifier)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(modifSolde, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 760, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_ajout)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 330, Short.MAX_VALUE)
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(TextRecherche, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(15, 15, 15))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(Effacer)
+                        .addGap(48, 48, 48)
+                        .addComponent(annuler)
+                        .addGap(235, 235, 235))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_ajout)
+                    .addComponent(TextRecherche, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modifPrenom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(modifNom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modifTel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(modifEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modifSolde, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(annuler)
+                    .addComponent(Effacer)
+                    .addComponent(modifier))
+                .addGap(33, 33, 33))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_ajoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ajoutActionPerformed
+        // TODO add your handling code here:
+        if (evt.getSource()== this.btn_ajout)
+        {
+            AjoutClient client = new AjoutClient(new javax.swing.JFrame(), true);
+            client.setVisible(true);
+        }
+    }//GEN-LAST:event_btn_ajoutActionPerformed
+
+    private void Table_clientMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Table_clientMouseClicked
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) Table_client.getModel();
+        int selectedIndex = Table_client.getSelectedRow();
+        String num = model.getValueAt(selectedIndex,0).toString();
+        String num1 = model.getValueAt(selectedIndex,3).toString();
+        int num2 = Integer.parseInt(model.getValueAt(selectedIndex,5).toString());
+        
+        modifNom.setText(model.getValueAt(selectedIndex,1).toString());
+        modifPrenom.setText(model.getValueAt(selectedIndex,2).toString());
+        modifTel.setText(model.getValueAt(selectedIndex,3).toString());
+        modifEmail.setText(model.getValueAt(selectedIndex,4).toString());
+        modifSolde.setText(model.getValueAt(selectedIndex,5).toString());
+        
+    }//GEN-LAST:event_Table_clientMouseClicked
+
+    private void modifierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifierActionPerformed
+        // TODO add your handling code here:
+        try
+        {
+            DefaultTableModel model = (DefaultTableModel) Table_client.getModel();
+            int selectedIndex = Table_client.getSelectedRow();
+            
+            String num = (model.getValueAt(selectedIndex,0).toString());
+            //String num1 = (model.getValueAt(selectedIndex,3).toString());
+        
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/banque","root","");
+            st = conn.prepareStatement("UPDATE CLIENT SET NOM=?,PRENOM=?,TEL=?,EMAIL=?,SOLDET=? WHERE numCompte=?");
+            
+            st.setString(1,modifNom.getText());
+            st.setString(2,modifPrenom.getText());
+            st.setString(3,modifTel.getText());
+            st.setString(4,modifEmail.getText());
+            st.setString(5,modifSolde.getText());
+            st.setString(6, num);
+            int row = st.executeUpdate();
+            JOptionPane.showMessageDialog(null,"modification valider");
+            
+            modifSolde.setText("");
+            modifNom.setText("");
+            modifPrenom.setText("");
+            modifTel.setText(""); 
+            modifEmail.setText("");        
+            
+            voir_list_client();
+        }
+        catch(SQLException e)
+        {
+            //System.out.println("erreur");
+            e.printStackTrace();
+        }                    
+    }//GEN-LAST:event_modifierActionPerformed
+
+    private void EffacerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EffacerActionPerformed
+        // TODO add your handling code here:
+        try
+        {
+            DefaultTableModel model = (DefaultTableModel) Table_client.getModel();
+            int selectedIndex = Table_client.getSelectedRow();
+            
+            String num = (model.getValueAt(selectedIndex,0).toString());
+        
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/banque","root","");
+            st = conn.prepareStatement("DELETE FROM CLIENT WHERE numCompte=?");
+            st.setString(1, num);
+            int row = st.executeUpdate();
+            JOptionPane.showMessageDialog(null,"suppression effectuer");
+            
+            modifSolde.setText("");
+            modifNom.setText("");
+            modifPrenom.setText("");
+            modifTel.setText(""); 
+            modifEmail.setText(""); 
+            
+            voir_list_client();
+                  
+        }
+        catch(SQLException e)
+        {
+            //System.out.println("erreur");
+            e.printStackTrace();
+        } 
+    }//GEN-LAST:event_EffacerActionPerformed
+
+    private void annulerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annulerActionPerformed
+        // TODO add your handling code here:
+        modifSolde.setText("");
+        modifNom.setText("");
+        modifPrenom.setText("");
+        modifTel.setText(""); 
+        modifEmail.setText(""); 
+    }//GEN-LAST:event_annulerActionPerformed
+
+    private void TextRechercheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextRechercheActionPerformed
+        // TODO add your handling code here:
+         TextRecherche.getDocument().addDocumentListener(new DocumentListener()
+         {
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateSearchResults();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateSearchResults();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        updateSearchResults();
+    } 
+    
+    private void updateSearchResults(){        
+    String rechercher = TextRecherche.getText();
+   // int rechercher2 = Integer.parseInt(TextRecherche.getText());
+    
+    try
+    {
+         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/banque","root","");
+         st = conn.prepareStatement("SELECT * FROM CLIENT WHERE numCompte LIKE ? OR NOM LIKE ?");
+         
+         // Remplacer "%" par la recherche appropriée
+        st.setString(1, "%" + rechercher + "%");
+        st.setString(2, "%" + rechercher + "%");
+        
+        resultat = st.executeQuery();
+        
+        DefaultTableModel model = (DefaultTableModel) Table_client.getModel();
+        model.setRowCount(0);
+         while (resultat.next()) {
+             Object[] donne = {
+            resultat.getString("numCompte"),
+            resultat.getString("NOM"),
+            resultat.getString("PRENOM"),
+            resultat.getString("TEL"),
+            resultat.getString("EMAIL"),
+            resultat.getString("SOLDET"),
+         };
+         model.addRow(donne);
+         } 
+
+         
+    }
+    catch (Exception ex) {
+            System.out.println("---SQLException: " + ex);
+        }
+    }
+   });    
+    }//GEN-LAST:event_TextRechercheActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Effacer;
+    private javax.swing.JTable Table_client;
+    private javax.swing.JTextField TextRecherche;
+    private javax.swing.JButton annuler;
+    private javax.swing.JButton btn_ajout;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField modifEmail;
+    private javax.swing.JTextField modifNom;
+    private javax.swing.JTextField modifPrenom;
+    private javax.swing.JTextField modifSolde;
+    private javax.swing.JTextField modifTel;
+    private javax.swing.JButton modifier;
+    // End of variables declaration//GEN-END:variables
+}
